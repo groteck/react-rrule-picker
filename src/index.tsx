@@ -11,12 +11,14 @@ import {
   ButtonProps
 } from '@material-ui/core'
 import { EventNote } from '@material-ui/icons'
-import RRule, { rrulestr } from 'rrule'
+import RRule, { rrulestr, Frequency, RRuleSet, Weekday } from 'rrule'
 import { useTranslation, I18nextProvider } from 'react-i18next'
 import { i18n } from 'i18next'
 
+import ModeSelector from './modes/ModeSelector'
+
 import Placeholder from './types/Placeholder'
-import RRuleSet from './types/RRuleSet'
+import './types/RRuleSet'
 
 import i18nDefault from './utils/i18n'
 
@@ -54,17 +56,16 @@ const getInputDefaultValue = (
   // Cast the `defaultValue` into an `RRuleSet` in case of failure we will
   // use the Placeholder type and trigger a warning
   try {
-    if (defaultValue?.length)
-      return rrulestr(defaultValue as string, {
-        forceset: true
-      }) as RRuleSet
+    return rrulestr(defaultValue as string, {
+      forceset: true
+    }) as RRuleSet
   } catch (e) {
     console.warn(
       `Failure trying to cast the defaultValue: ${defaultValue} into an RRuleSet, 
       this usually means that you are not passing an RRule or RRuleSet string as defaultValue`
     )
+    return defaultPlaceholder(placeholderText)
   }
-  return defaultPlaceholder(placeholderText)
 }
 
 const getRRuleOptions = (set: RRuleSet) => {
@@ -115,13 +116,30 @@ export const RRulePicker: React.FC<Props> = ({
   }
 
   const handleChange = (resultValue?: RRuleSet) => {
+    console.log('Generates', JSON.stringify(result, null, 2))
+
     if (resultValue) onChangeCallback(resultValue.toString(), resultValue)
+  }
+
+  const handleFreqUpdate = (freq: Frequency) => {
+    console.log('Frequency', freq)
+
+    setResult((prevResult) =>
+      RRuleSet.freqUpdate(prevResult || defaultRRuleSet, freq)
+    )
+  }
+
+  const handleDaysUpdate = (byweekday: Weekday[]) => {
+    console.log('Weekdays', byweekday)
+
+    setResult((prevResult) =>
+      RRuleSet.byweekdayUpdate(prevResult || defaultRRuleSet, byweekday)
+    )
   }
 
   const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    setResult(defaultRRuleSet)
     handleCloseDialog()
   }
 
@@ -134,14 +152,18 @@ export const RRulePicker: React.FC<Props> = ({
         id='RRulePickerField'
         {...composedTextFieldProps}
         onClick={handleOpenDialog}
-        defaultValue={rruleSetParsed.toText()}
+        defaultValue={result?.toText() || rruleSetParsed.toText()}
       />
       <Dialog open={displayPicker} onClose={handleCloseDialog}>
         <DialogTitle>{t('selectorTitle')}</DialogTitle>
         <form id='RRulePickerForm' onSubmit={handleSave}>
           <DialogContent>
             {rruleSetParsed._type === 'RRuleSet' && (
-              <span>{getRRuleOptions(rruleSetParsed).freq}</span>
+              <ModeSelector
+                rruleOptions={getRRuleOptions(rruleSetParsed)}
+                setFrequency={handleFreqUpdate}
+                setByweekday={handleDaysUpdate}
+              />
             )}
           </DialogContent>
           <DialogActions>

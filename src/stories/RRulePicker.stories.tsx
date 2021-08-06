@@ -19,8 +19,3 @@ export const WithDefaultValue = Template.bind({})
 WithDefaultValue.args = {
   defaultValue: 'FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1'
 }
-
-export const WithPlaceHolderText = Template.bind({})
-WithPlaceHolderText.args = {
-  placeholderText: 'This is a custom placeholder'
-}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, TextField } from '@material-ui/core'
+import { Box } from '@material-ui/core'
 import { Options as RRuleOpts } from 'rrule'
 
 export interface YearModeProps {
@@ -7,11 +7,7 @@ export interface YearModeProps {
 }
 
 const YearMode: React.FC<YearModeProps> = () => {
-  return (
-    <Box>
-      <TextField />
-    </Box>
-  )
+  return <Box>YearMode</Box>
 }
 
 export default YearMode

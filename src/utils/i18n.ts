@@ -18,7 +18,20 @@ i18n
           cancelButtonText: 'Cancel',
           placeholderText: 'No recurrence selected',
           saveButtonText: 'Save',
-          selectorTitle: 'Select recurrence'
+          selectorTitle: 'Select recurrence',
+          weekdays: {
+            M: 'Mo',
+            T: 'Tu',
+            W: 'We',
+            R: 'Th',
+            F: 'Fr',
+            S: 'Sa',
+            U: 'Su'
+          },
+          frequency: {
+            Yearly: 'Yearly',
+            Weekly: 'Weekly'
+          }
         }
       }
     }
